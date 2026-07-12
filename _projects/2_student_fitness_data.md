@@ -2,6 +2,7 @@
 layout: page
 title: "<span data-lang-ko>학생체력평가데이터-국민체력100 체력항목 및 평가기준 비교</span><span data-lang-en>Student Fitness Assessment Data vs. National Fitness 100: Comparison of Fitness Items &amp; Criteria</span>"
 description: "<span data-lang-ko>학생체력평가데이터(PAPS)를 전처리·분석하여 제도 개선 제안</span><span data-lang-en>Preprocessing and analyzing student fitness assessment data (PAPS) to propose improvements to the assessment system</span>"
+tab_title: "Student Fitness Data · KISS"
 company: "<span data-lang-ko>한국스포츠과학원</span><span data-lang-en>Korea Institute of Sport Science</span>"
 badge_color: "#0d9488"
 period: "<span data-lang-ko>2023.04 – 2024.02 (11개월)</span><span data-lang-en>Apr 2023 – Feb 2024 (11 months)</span>"

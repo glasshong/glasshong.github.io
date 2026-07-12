@@ -2,6 +2,7 @@
 layout: page
 title: "<span data-lang-ko>온디바이스 sLM 최적화</span><span data-lang-en>On-Device sLM Optimization</span>"
 description: "<span data-lang-ko>인터넷 연결 없이 스마트폰에서 통화 내용을 요약할 수 있는 소형 언어모델 제작</span><span data-lang-en>Building an on-device small language model that summarizes phone calls without an internet connection</span>"
+tab_title: "On-Device sLM · OptAI"
 company: OptAI
 badge_color: "#2563eb"
 period: "<span data-lang-ko>2025.09 – 2025.12 (4개월)</span><span data-lang-en>Sep 2025 – Dec 2025 (4 months)</span>"
