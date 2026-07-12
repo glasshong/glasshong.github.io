@@ -1,0 +1,307 @@
+<header>
+  <!-- Language toggle: apply saved language as early as possible to avoid flash -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('site-lang') || 'ko';
+        document.documentElement.setAttribute('data-lang', saved);
+      } catch (e) {
+        document.documentElement.setAttribute('data-lang', 'ko');
+      }
+    })();
+  </script>
+  <style>
+    html[data-lang='ko'] [data-lang-en] {
+      display: none !important;
+    }
+    html[data-lang='en'] [data-lang-ko] {
+      display: none !important;
+    }
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+    }
+    .lang-toggle .lang-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.5;
+      padding: 0 0.2rem;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+    .lang-toggle .lang-btn.active {
+      opacity: 1;
+      font-weight: 600;
+    }
+    .lang-toggle .lang-sep {
+      opacity: 0.35;
+    }
+    /* 소셜 아이콘(이메일/LinkedIn/RSS) 크기 축소 — gem 기본값 4rem이 너무 큼 */
+    .social .contact-icons {
+      font-size: 2rem;
+    }
+    /* About 프로필 사진 크기 축소 (gem 기본 30% → 24%), 오른쪽 배치 유지 */
+    @media (min-width: 576px) {
+      .profile {
+        width: 24%;
+      }
+    }
+    /* page 레이아웃(Publications/Projects/Education 등) 제목 볼드 — about 이름(.desc)은 제외 */
+    .post-header:has(.post-description) .post-title {
+      font-weight: 700;
+    }
+  </style>
+
+  <!-- Nav Bar -->
+  <nav id="navbar" class="navbar navbar-light navbar-expand-sm {% if site.navbar_fixed %}fixed-top{% else %}sticky-top{% endif %}" role="navigation">
+    <div class="container">
+      {% if page.permalink != '/' %}
+        <a class="navbar-brand title font-weight-lighter" href="{{ site.baseurl }}/">
+          {% if site.title == 'blank' %}
+            <span data-lang-ko class="font-weight-bold">홍유리</span><span data-lang-en class="font-weight-bold">Yuri Hong</span>
+          {% else %}
+            {{- site.title -}}
+          {% endif %}
+        </a>
+      {% elsif site.enable_navbar_social %}
+        <!-- Social Icons -->
+        <div class="navbar-brand social">{% social_links %}</div>
+      {% endif %}
+      <!-- Navbar Toggle -->
+      <button
+        class="navbar-toggler collapsed navbar-toggler-main"
+        type="button"
+        data-nav-toggle="navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar top-bar"></span>
+        <span class="icon-bar middle-bar"></span>
+        <span class="icon-bar bottom-bar"></span>
+      </button>
+
+      <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav">
+        <ul class="navbar-nav navbar-menu-list flex-nowrap">
+          {% for page in site.pages %}
+            {% if page.permalink == '/' %} {% assign about_title = page.title %} {% endif %}
+          {% endfor %}
+
+          <!-- About -->
+          <li class="nav-item {% if page.permalink == '/' %}active{% endif %}">
+            <a class="nav-link" href="{{ '/' | relative_url }}">
+              {{- about_title }}
+              {% if page.permalink == '/' %}
+                <span class="sr-only">(current)</span>
+              {% endif %}
+            </a>
+          </li>
+
+          <!-- Other pages -->
+          {% assign sorted_pages = site.pages | sort: 'nav_order' %}
+          {% for p in sorted_pages %}
+            {% if p.nav and p.autogen == null %}
+              {% if p.dropdown %}
+                {% assign has_active_child = false %}
+                {% for child in p.children %}
+                  {% if page.title == child.title %}
+                    {% assign has_active_child = true %}
+                  {% endif %}
+                {% endfor %}
+                <li class="nav-item dropdown {% if page.title == p.title or has_active_child %}active{% endif %}">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-nav-dropdown-toggle="true"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    {{- p.title }}
+                    {% if page.title == p.title or has_active_child %}
+                      <span class="sr-only">(current)</span>
+                    {% endif %}
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    {% for child in p.children %}
+                      {% if child.title == 'divider' %}
+                        <div class="dropdown-divider"></div>
+                      {% else %}
+                        <a
+                          class="dropdown-item {% if page.title == child.title %}active{% endif %}"
+                          href="{% if child.permalink contains '://' %}{{ child.permalink }}{% else %}{{ child.permalink | relative_url }}{% endif %}"
+                        >
+                          {{- child.title -}}
+                        </a>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </li>
+              {% else %}
+                {% assign parent_link = p.permalink | remove: 'index.html' %}
+                <li class="nav-item {% if page.url contains parent_link %}active{% endif %}">
+                  {%- if p.permalink contains '://' -%}
+                    {%- assign url = p.permalink -%}
+                  {%- elsif p.permalink contains '/blog/' -%}
+                    {%- assign url = '/blog/' -%}
+                  {%- else -%}
+                    {%- assign url = p.url -%}
+                  {%- endif %}
+                  <a class="nav-link" href="{{ url | relative_url }}"{% if p.permalink contains '://' %} target="_blank" rel="noopener"{% endif %}>
+                    {{- p.title }}
+                    {% if page.url contains p.url %}
+                      <span class="sr-only">(current)</span>
+                    {% endif %}
+                  </a>
+                </li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if site.search_enabled %}
+            <!-- Search -->
+            <li class="nav-item">
+              <button id="search-toggle" type="button" title="Search" aria-label="Open search">
+                <span class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></span>
+              </button>
+            </li>
+          {% endif %}
+
+          <!-- Language toggle (KO | EN) -->
+          <li class="toggle-container lang-toggle">
+            <button type="button" class="lang-btn" data-lang-set="ko" title="한국어로 보기">한국어</button>
+            <span class="lang-sep">|</span>
+            <button type="button" class="lang-btn" data-lang-set="en" title="View in English">English</button>
+          </li>
+
+          {% if site.enable_darkmode %}
+            <!-- Toogle theme mode -->
+            <li class="toggle-container">
+              <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme">
+                <i class="fa-half-sun-moon" id="light-toggle-system"></i>
+                <i class="fa-solid fa-moon" id="light-toggle-dark"></i>
+                <i class="fa-solid fa-sun" id="light-toggle-light"></i>
+              </button>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  {% if site.enable_progressbar %}
+    <!-- Scrolling Progress Bar -->
+    <progress id="progress" value="0">
+      <div class="progress-container">
+        <span class="progress-bar"></span>
+      </div>
+    </progress>
+  {% endif %}
+
+  <!-- Language toggle behavior: switch instantly on click, persist in localStorage -->
+  <script>
+    (function () {
+      function applyLang(lang) {
+        document.documentElement.setAttribute('data-lang', lang);
+        try {
+          localStorage.setItem('site-lang', lang);
+        } catch (e) {}
+        var btns = document.querySelectorAll('.lang-btn');
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].classList.toggle('active', btns[i].getAttribute('data-lang-set') === lang);
+        }
+      }
+      var saved = 'ko';
+      try {
+        saved = localStorage.getItem('site-lang') || 'ko';
+      } catch (e) {}
+      applyLang(saved);
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.lang-btn') : null;
+        if (btn) {
+          e.preventDefault();
+          applyLang(btn.getAttribute('data-lang-set'));
+        }
+      });
+    })();
+  </script>
+
+  <!-- 소셜 아이콘: hover 시 이메일/LinkedIn 표시, 이메일 클릭 시 주소 복사 -->
+  <script>
+    (function () {
+      function tipLabel(a) {
+        var href = a.getAttribute('href') || '';
+        if (href.indexOf('mailto:') === 0) return href.replace(/^mailto:/, '').split('?')[0];
+        if (href.indexOf('linkedin.com') !== -1) return href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+        return null;
+      }
+      function showTip(a, text, autohide) {
+        var old = a.querySelector('.contact-tip');
+        if (old) old.parentNode.removeChild(old);
+        var tip = document.createElement('span');
+        tip.className = 'contact-tip';
+        tip.textContent = text;
+        tip.style.cssText =
+          'position: absolute; left: 50%; top: 0; transform: translate(-50%, -150%);' +
+          'background: var(--global-theme-color, #b509ac); color: #fff; font-size: 0.7rem;' +
+          'padding: 2px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; z-index: 100;';
+        a.style.position = 'relative';
+        a.appendChild(tip);
+        if (autohide) {
+          setTimeout(function () {
+            if (tip.parentNode) tip.parentNode.removeChild(tip);
+          }, 1100);
+        }
+      }
+      function hideTip(a) {
+        var t = a.querySelector('.contact-tip');
+        if (t) t.parentNode.removeChild(t);
+      }
+      // 이벤트 위임: 아이콘이 나중에 그려져도 동작
+      document.addEventListener('mouseover', function (e) {
+        var a = e.target.closest ? e.target.closest('.contact-icons a') : null;
+        if (!a || a.querySelector('.contact-tip')) return;
+        var label = tipLabel(a);
+        if (label) showTip(a, label, false);
+      });
+      document.addEventListener('mouseout', function (e) {
+        var a = e.target.closest ? e.target.closest('.contact-icons a') : null;
+        if (!a) return;
+        if (e.relatedTarget && a.contains(e.relatedTarget)) return;
+        hideTip(a);
+      });
+      // 이메일 클릭 → 주소를 클립보드에 복사 + '복사됨!' 표시
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest ? e.target.closest('.contact-icons a[href^="mailto:"]') : null;
+        if (!a) return;
+        e.preventDefault();
+        var email = a.getAttribute('href').replace(/^mailto:/, '').split('?')[0];
+        var done = function () {
+          var lang = document.documentElement.getAttribute('data-lang') || 'ko';
+          showTip(a, lang === 'en' ? 'Copied!' : '복사됨!', true);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email).then(done).catch(function () {
+            fallbackCopy(email, done);
+          });
+        } else {
+          fallbackCopy(email, done);
+        }
+      });
+      function fallbackCopy(text, done) {
+        var tmp = document.createElement('input');
+        tmp.value = text;
+        document.body.appendChild(tmp);
+        tmp.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {}
+        document.body.removeChild(tmp);
+        done();
+      }
+    })();
+  </script>
+</header>

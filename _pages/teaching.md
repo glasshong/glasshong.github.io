@@ -3,7 +3,7 @@ layout: page
 permalink: /teaching/
 title: teaching
 description: Course materials, schedules, and resources for classes taught.
-nav: true
+# nav: true # 임시 비활성화 — 메뉴에 다시 표시하려면 이 줄의 주석(#)을 해제하세요
 nav_order: 6
 calendar: true
 ---

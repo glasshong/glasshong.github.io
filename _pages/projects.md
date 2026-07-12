@@ -1,11 +1,11 @@
 ---
 layout: page
-title: projects
+title: Projects
 permalink: /projects/
-description: A growing collection of your cool projects.
+# description: # 임시 비활성화 — 상단 설명 문구가 필요하면 주석(#)을 해제하세요
 nav: true
 nav_order: 3
-display_categories: [work, fun]
+# display_categories 를 지정하지 않으면 카테고리 없이 카드가 한 목록으로 나옵니다
 horizontal: false
 ---
 
@@ -29,7 +29,7 @@ horizontal: false
     </div>
   </div>
   {% else %}
-  <div class="row row-cols-1 row-cols-md-3">
+  <div class="row row-cols-1">
     {% for project in sorted_projects %}
       {% include projects.liquid %}
     {% endfor %}
@@ -55,7 +55,7 @@ horizontal: false
     </div>
   </div>
   {% else %}
-  <div class="row row-cols-1 row-cols-md-3">
+  <div class="row row-cols-1">
     {% for project in sorted_projects %}
       {% include projects.liquid %}
     {% endfor %}

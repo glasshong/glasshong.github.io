@@ -3,7 +3,7 @@ layout: profiles
 permalink: /people/
 title: people
 description: members of the lab or group
-nav: true
+# nav: true # 임시 비활성화 — 메뉴에 다시 표시하려면 이 줄의 주석(#)을 해제하세요
 nav_order: 7
 
 profiles:
